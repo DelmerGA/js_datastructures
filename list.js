@@ -12,18 +12,24 @@ function List(){
 };
 
 List.prototype.head = function() {
-	return this.node.value;
+	return this.node? this.node.value : this.node;
 };
 
 List.prototype.tail = function(){
-	var list = new List();
-	list.node = this.node.next;
-	list.last = this.last;
-	list.length -= 1;
-	return list;
+	if(this.node === null){
+		return this;
+	} else {
+		var list = new List();
+		if(this.node.next){
+			list.node = this.node.next;
+			list.last = this.last;
+			list.length = this.length - 1;
+		}
+		return list;
+	}
 };
 
-List.prototype.shift = function(value){
+List.prototype.unshift = function(value){
 	var old_node = this.node;
 	this.node = new Node(value);
 	this.node.next = old_node;
@@ -34,18 +40,19 @@ List.prototype.shift = function(value){
 	return this;
 };
 
-List.prototype.unshift = function(){
-	this = this.tail();
+List.prototype.shift = function(){
+	this.node = this.tail().node;
+	return this;
 };
 
 List.prototype.push = function(value){
 	if(this.node === null){
-		this.shift(value);
+		this.unshift(value);
 	} else {
 		this.last.next = new Node(value);
 		this.last = this.last.next;
+		this.length += 1;
 	}
-	this.length += 1;
 	return this;
 };
 
@@ -57,20 +64,11 @@ List.prototype.pop = function(){
 
 };
 
-/*
-List.prototype.length = function(){
-	var currentList = this, length = 0;
-	while(currentList.node !== this.last){
-		currentList.node = this.tail();
-		length += 1;
-	};
-	return length;
-};
-*/
+
 
 List.prototype.insert_after = function(index, value, list){
 	list = list || this;
-	if (this.node === null || this.node.next === null && index > 0 || index < 0){
+	if (this.node === null || index < 0){
 		throw RangeError("invalid index")
 	} else if(index === 0) {
 		var old_next = this.node.next;

@@ -1,5 +1,67 @@
 var List = require("../list")
 
+describe("Node", function(){
+
+	describe("hasOwnProperty", function(){
+		var node = new Node();
+
+		it("'value' ", function(){
+			expect(node.hasOwnProperty("value")).toEqual(true);
+		});
+
+		it("'next'", function(){
+			expect(node.hasOwnProperty("next")).toEqual(true);
+		});
+
+		it("previous", function(){
+			expect(node.hasOwnProperty("previous")).toEqual(true);
+		});
+	});
+
+	describe("constructor defaults", function(){
+		var node = new Node();
+
+		it("'value' ", function(){
+			expect(node["value"]).toBe(null);
+		});
+
+		it("'next'", function(){
+			expect(node["next"]).toBe(null);
+		});
+		it("previous", function(){
+			expect(node.previous())).toEqual(null);
+		});
+	});
+
+	describe("constructor with value", function(){
+
+		it("sets node.value ", function(){
+			var node = new Node(1);
+			expect(node.value).toBe(1);
+		});
+
+		it("sets node.previous to a function that returns null ", function(){
+			var node = new Node(1);
+			expect(node.previous.constructor.name).toBe("Function");
+			expect(node.previous()).toBe(null);
+		});
+
+	});
+
+	describe("prototype has own property", function(){
+		var proto = Node.prototype;
+		expect(proto.hasOwnProperty("setPrevious")).toBe(true)
+	});	
+
+	describe("#setPrevious", function(){
+		var node = new Node(2);
+		var prev_node = new Node(1);
+		node.setPrevious(prev_node)
+		expect(node.previous()).toBe(prev_node);
+	});
+})
+
+
 describe("List", function(){
 
 	describe("hasOwnProperty", function(){
@@ -94,9 +156,17 @@ describe("List", function(){
 			list.push(2);
 			expect(list.length).toEqual(2);
 		});
+
+		it("should set previous() on new node", function(){
+			list.push(1).push(2)
+			expect(list.last.previous()).toEqual(list.node.next);
+		});
+
 		it("should return self", function(){
 			expect(list.push(1)).toEqual(list);
 		});
+
+
 	});
 
 	describe("#tail", function(){
@@ -140,6 +210,13 @@ describe("List", function(){
 			var tail = list.tail();
 			expect(tail.length).toEqual(length - 1)
 		});
+
+		it("should set node.previous() to null", function(){
+			list.push(1).push(2);
+			var tail = list.tail();
+			expect(tail.node.previous()).toBe(null);
+		});
+
 	});
 
 
@@ -216,6 +293,11 @@ describe("List", function(){
 			list.shift();
 			expect(list.node).toEqual(tail.node);
 		});
+		it("should set node.previous() to null", function(){
+			list.push(1).push(2)
+			list.shift()
+			expect(list.node.previous()).toBe(null);
+		});
 	});
 
 	describe("#insert_after", function(){
@@ -264,6 +346,13 @@ describe("List", function(){
 				var new_node = list.node.next.next;
 				expect(new_node.value).toEqual(3);
 				expect(list.last).toBe(new_node)
+		});
+
+		it("should set previous() on new node", function(){
+			list.push(1).push(3);
+			list.insert_after(0,2);
+			var next = list.node.next;
+			expect(next.previous()).toBe(list.node);
 		});
 	});
 });

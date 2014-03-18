@@ -193,11 +193,12 @@ describe("List", function(){
 			expect(tail.last).toEqual(null);
 		});
 
-		it("should return a new list with node.next for length > 1", function(){
+		it("should return a new list with equivalent node.next for length > 1", function(){
 			list.push(1).push(2);
 			var next_node = list.node.next;
 			var tail = list.tail();
-			expect(tail.node).toEqual(next_node)
+			expect(tail.node.value).toEqual(next_node.value);
+			expect(tail.node.next).toBe(next_node.next);
 		});
 
 		it("should return a new list with same last node", function(){
@@ -211,12 +212,6 @@ describe("List", function(){
 			var length = list.length;
 			var tail = list.tail();
 			expect(tail.length).toEqual(length - 1)
-		});
-
-		it("should set node.previous() to null", function(){
-			list.push(1).push(2);
-			var tail = list.tail();
-			expect(tail.node.previous()).toBe(null);
 		});
 
 	});
@@ -247,12 +242,9 @@ describe("List", function(){
 			list.push(1);
 			list.push(2);
 			list.push(3);
-			var secondToLast = list;
-			while(secondToLast.length !== 2 ){
-				secondToLast = secondToLast.tail();
-			};
+			var secondToLast = list.last.previous();
 			list.pop();
-			expect(secondToLast.node.next).toEqual(null);
+			expect(secondToLast).toEqual(list.last);
 		});
 
 		it("should update last to equal second to last", function(){
@@ -358,4 +350,60 @@ describe("List", function(){
 			expect(next.previous()).toBe(list.node);
 		});
 	});
+
+
+	describe("#unshift", function(){
+		var list;
+		beforeEach(function(){
+			list = new List();
+		});
+
+		it("should add a node to an empty list", function(){
+			list.unshift(1);
+			expect(list.node.value).toEqual(1);
+		});
+
+		it("should update head and last for empty list", function(){
+			list.unshift(1);
+			expect(list.head()).toEqual(1);
+			expect(list.last).toBe(list.node);
+		});
+
+		it("should update the head of an existing list", function(){
+			list.push(2).unshift(1);
+			expect(list.node.value).toEqual(1);
+		});
+
+		it("should properly update next node after unshift", function(){
+			var oldHeadNode = list.push(2).node;
+			list.unshift(1)
+			expect(oldHeadNode.previous()).toBe(list.node);
+		});
+	});
+
+	describe("#insert", function(){
+		var list;
+
+		beforeEach(function(){
+			list = new List();
+		});
+
+		it("should insert for empty list", function(){
+			list.insert(0,1);
+			expect(list.head()).toEqual(1);
+		});
+
+		it("should insert for populated list", function(){
+			list.push(1).push(3).push(4);
+			list.insert(1,2);
+			expect(list.node.next.value).toEqual(2);
+		});
+
+		it("should be able to insert at length", function(){
+			list.push(1).push(2);
+			list.insert(2,3);
+			expect(list.node.next.next.value).toEqual(3);
+		});
+	});
+
 });

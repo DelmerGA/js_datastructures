@@ -13,8 +13,7 @@ Node.prototype.setPrevious = function(node){
 	return this;
 };
 
-
-// Singly Linked List
+// Doubley linked list
 function List(){
 	this.node = null;
 	this.last = null;

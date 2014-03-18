@@ -1,4 +1,6 @@
-var List = require("../list")
+var listModule = require("../dbl_list_sol"),
+	List = listModule.list,
+	Node = listModule.node;
 
 describe("Node", function(){
 
@@ -29,7 +31,7 @@ describe("Node", function(){
 			expect(node["next"]).toBe(null);
 		});
 		it("previous", function(){
-			expect(node.previous())).toEqual(null);
+			expect(node.previous()).toEqual(null);
 		});
 	});
 
@@ -159,7 +161,7 @@ describe("List", function(){
 
 		it("should set previous() on new node", function(){
 			list.push(1).push(2)
-			expect(list.last.previous()).toEqual(list.node.next);
+			expect(list.last.previous()).toBe(list.node);
 		});
 
 		it("should return self", function(){
@@ -225,8 +227,8 @@ describe("List", function(){
 		beforeEach(function(){
 			list = new List();
 		});
-		it("should return self for empty list", function(){
-			expect(list.pop()).toEqual(list)
+		it("should return null for empty list", function(){
+			expect(list.pop()).toBe(null)
 		});
 
 		it("should set node to null for one item list", function(){
@@ -294,6 +296,7 @@ describe("List", function(){
 			expect(list.node).toEqual(tail.node);
 		});
 		it("should set node.previous() to null", function(){
+			var list = new List(); 
 			list.push(1).push(2)
 			list.shift()
 			expect(list.node.previous()).toBe(null);
